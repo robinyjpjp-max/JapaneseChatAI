@@ -1,0 +1,7 @@
+{
+  "name": "日语口语对话小助手",
+  "description": "一个智能的日语口语对话伙伴，提供实时纠错和反馈。",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
