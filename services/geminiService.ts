@@ -1,6 +1,6 @@
+
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { TutorResponse } from '../types';
-import { decode, decodeAudioData } from './audioUtils';
 
 const API_KEY = process.env.API_KEY || '';
 
@@ -85,35 +85,29 @@ export const sendMessageToTutor = async (
   }
 };
 
-export const generateSpeech = async (text: string): Promise<AudioBuffer> => {
+export const generateSpeech = async (text: string): Promise<string> => {
   const client = getAI();
-  
   try {
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash-preview-tts',
+      model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text }] }],
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Kore' }, // Kore is a good Japanese-compatible voice usually
+            prebuiltVoiceConfig: { voiceName: 'Kore' },
           },
         },
       },
     });
 
-    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    
-    if (!base64Audio) {
-        throw new Error("No audio data returned");
+    const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    if (!audioData) {
+      throw new Error("No audio data received");
     }
-
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-    const audioBuffer = await decodeAudioData(decode(base64Audio), audioContext, 24000, 1);
-    return audioBuffer;
-
+    return audioData;
   } catch (error) {
-    console.error("Gemini TTS Error:", error);
+    console.error("TTS Error:", error);
     throw error;
   }
 };
