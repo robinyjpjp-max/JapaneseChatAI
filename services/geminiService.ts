@@ -1,15 +1,12 @@
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { TutorResponse } from '../types';
-
-const API_KEY = process.env.API_KEY || '';
 
 // Singleton instance
 let ai: GoogleGenAI | null = null;
 
 const getAI = () => {
   if (!ai) {
-    ai = new GoogleGenAI({ apiKey: API_KEY });
+    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
   return ai;
 };
